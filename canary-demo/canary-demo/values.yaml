@@ -1,7 +1,7 @@
 replicaCount: 3
 
 image:
-  repository: uonyeka/canary-demo
+  repository: tmichalak/canary-demo
   tag: "v1"
   pullPolicy: IfNotPresent
 
@@ -12,7 +12,7 @@ service:
 
 ingress:
   enabled: true
-  host: "canary-demo.local"
+  host: "canary-demo-127-0-0-1.nip.io"
 
 canary:
   enabled: true
