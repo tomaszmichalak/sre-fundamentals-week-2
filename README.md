@@ -13,8 +13,7 @@ I decided to use the `kind` tool to create a Kubernetes cluster and deploy the `
 To start the local development environment, run the following command:
 
 ```bash
-cd scripts
-./start.sh
+./scripts/start.sh
 ```
 
 This script will create a Kubernetes cluster using `kind`, deploy the Ingress Controller, Prometheus Monitoring Stack, and the `canary-demo` application.
@@ -22,8 +21,7 @@ This script will create a Kubernetes cluster using `kind`, deploy the Ingress Co
 To stop the local development environment, run the following command:
 
 ```bash
-cd scripts
-./stop.sh
+./scripts/stop.sh
 ```
 
 This script will delete the Kubernetes cluster.
@@ -68,6 +66,10 @@ Ingress is available at `localhost:80`, `localhost:443`. These ports are configu
 Deploy the Prometheus Monitoring Stack using the following command:
 
 ```bash
+kubectl create configmap upcommerce-grafana-dashboard --from-file=upcommerce.json -n monitoring --dry-run=client -o json | jq '.metadata += {"labels":{"grafana_dashboard":"1"}}' | kubectl apply -f -
+```
+
+```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack -f ./prometheus/values.yaml -n monitoring --create-namespace
@@ -97,7 +99,8 @@ python3 ./canary-demo/tests/test_app.py
 ### Check Metrics
 
 ```bash
-kubectl port-forward svc/canary-demo 8080:80 -n canary-demo & kubectl port-forward svc/canary-demo-canary 8081:80 -n canary-demo & kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring & kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring &
+kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring & kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring &
 ```
 
 Login to Grafana with `localhost:3000` using the following credentials: `admin` /`prom-operator`.
+
